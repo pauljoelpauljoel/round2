@@ -1,0 +1,199 @@
+<!-- Combined Debugging Game + Scanning Animation Background -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIX-N-FIX⚡</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* === SCANNER BACKGROUND (FULL SCREEN) === */
+        .scanner-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            background: #071021;
+        }
+
+        .scanner-screen {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            background: #0b1221;
+            opacity: 0.45;
+        }
+
+        .scanner-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 6px;
+        }
+
+        .beam {
+            position: absolute;
+            left: -30%;
+            top: 0;
+            height: 100%;
+            width: 160%;
+            background: linear-gradient(90deg, transparent, rgba(57, 208, 255, 0.10), rgba(57, 208, 255, 0.20), rgba(57, 208, 255, 0.10), transparent);
+            animation: sweep 4s linear infinite;
+            transform: rotate(-25deg);
+            mix-blend-mode: screen;
+        }
+
+        @keyframes sweep {
+            0% {
+                transform: translateX(-10%) rotate(-25deg);
+            }
+
+            50% {
+                transform: translateX(20%) rotate(25deg);
+            }
+
+            100% {
+                transform: translateX(-10%) rotate(-25deg);
+            }
+        }
+
+        .scanner-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #39d0ff;
+            opacity: 0;
+            animation: ping 3s infinite;
+        }
+
+        .d1 {
+            left: 25%;
+            top: 40%;
+        }
+
+        .d2 {
+            left: 70%;
+            top: 60%;
+        }
+
+        .d3 {
+            left: 45%;
+            top: 20%;
+        }
+
+        @keyframes ping {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            10% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            40% {
+                opacity: 0.7;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.7);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- === SCANNER BACKGROUND LAYER === -->
+    <div class="scanner-bg">
+        <div class="scanner-screen"></div>
+        <div class="beam"></div>
+        <div class="scanner-dot d1"></div>
+        <div class="scanner-dot d2"></div>
+        <div class="scanner-dot d3"></div>
+    </div>
+
+    <!-- === ORIGINAL DEBUGGING GAME CODE (UNCHANGED) === -->
+
+    <div class="overlay"></div>
+    <div class="container">
+        <section id="entry-page" class="active">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="title">debug-game:~</span>
+                </div>
+                <div class="terminal-body">
+                    <h1 class="glitch" data-text="DEBUGGING GAME">DEBUGGING GAME</h1>
+                    <p class="prompt">Initialize sequence...</p>
+                    <div class="input-group">
+                        <label for="slot-input">> Enter Slot Number:</label>
+                        <input type="number" id="slot-input" min="1" max="40" placeholder="00" autofocus>
+                    </div>
+                    <button id="enter-btn" class="cyber-btn">ACCESS PROBLEM <span aria-hidden="true">_</span></button>
+                    <p id="error-msg" class="error hidden">ACCESS DENIED: Invalid Slot Number</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="links-page" class="hidden">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <button id="back-btn" class="back-link">&larr; TERMINATE SESSION</button>
+                    <span class="title">access-problem:</span>
+                </div>
+                <div class="terminal-body">
+                    <h2 id="slot-title">SLOT DATA ACQUIRED</h2>
+                    <div class="scan-line"></div>
+                    <ul id="links-list" class="links-list"></ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="script.js"></script>
+
+    <div id="debug-panel" class="debug-panel hidden">
+        <div class="debug-content">
+            <div class="slot-grid-container">
+                <div class="grid-overlay"></div>
+                <div id="slot-grid" class="slot-grid"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Speed Control Slider -->
+    <div class="speed-control"
+        style="position:fixed; bottom:20px; left:20px; z-index:9999; background:#281c26; padding:10px 15px; border:1px solid #0f0; border-radius:8px;">
+        <label style="color:rgb(38, 255, 0); font-family:monospace;">Scan Speed:</label>
+        <input id="speedSlider" type="range" min="1" max="10" value="3" step="1">
+    </div>
+
+    <script>
+        const slider = document.getElementById('speedSlider');
+        const scanner = document.querySelector('.beam');
+
+        slider.addEventListener('input', () => {
+            const speed = slider.value;
+            scanner.style.animationDuration = speed + 's';
+        });
+    </script>
+
+</body>
+
+</html>
