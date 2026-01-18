@@ -138,14 +138,39 @@
                     <span class="title">debug-game:~</span>
                 </div>
                 <div class="terminal-body">
-                    <h1 class="glitch" data-text="DEBUGGING GAME">DEBUGGING GAME</h1>
-                    <p class="prompt">Initialize sequence...</p>
-                    <div class="input-group">
-                        <label for="slot-input">> Enter Slot Number:</label>
-                        <input type="number" id="slot-input" min="1" max="40" placeholder="00" autofocus>
+                    <div class="logo-container home-logo">
+                        <img src="logo.jpg" alt="MIX-N-FIX Logo" class="app-logo">
                     </div>
-                    <button id="enter-btn" class="cyber-btn">ACCESS PROBLEM <span aria-hidden="true">_</span></button>
-                    <p id="error-msg" class="error hidden">ACCESS DENIED: Invalid Slot Number</p>
+                    <h1 class="glitch" data-text="SELECT LANGUAGE">SELECT LANGUAGE</h1>
+                    <p class="prompt">Choose your program....</p>
+
+                    <div class="language-grid">
+                        <div class="language-card" data-lang="c">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" alt="C"
+                                class="lang-icon">
+                            <span class="lang-name">C</span>
+                        </div>
+                        <div class="language-card" data-lang="cpp">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg"
+                                alt="C++" class="lang-icon">
+                            <span class="lang-name">C++</span>
+                        </div>
+                        <div class="language-card" data-lang="python">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+                                alt="Python" class="lang-icon">
+                            <span class="lang-name">PYTHON</span>
+                        </div>
+                        <div class="language-card" data-lang="java">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
+                                alt="Java" class="lang-icon">
+                            <span class="lang-name">JAVA</span>
+                        </div>
+                        <div class="language-card" data-lang="js">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+                                alt="JS" class="lang-icon">
+                            <span class="lang-name">JS</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -153,8 +178,11 @@
         <section id="links-page" class="hidden">
             <div class="terminal-window">
                 <div class="terminal-header">
-                    <button id="back-btn" class="back-link">&larr; TERMINATE SESSION</button>
-                    <span class="title">access-problem:</span>
+                    <div class="header-logo">
+                        <img src="logo.jpg" alt="Logo" class="mini-logo">
+                    </div>
+                    <button id="back-btn" class="back-link">&larr; SELECT MODULE</button>
+                    <span class="title">access-cortex:</span>
                 </div>
                 <div class="terminal-body">
                     <h2 id="slot-title">SLOT DATA ACQUIRED</h2>
@@ -165,7 +193,7 @@
         </section>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script type="module" src="script.js?v=3"></script>
 
     <div id="debug-panel" class="debug-panel hidden">
         <div class="debug-content">

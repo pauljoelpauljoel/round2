@@ -1,59 +1,37 @@
-import slotsData from './slots.js';
+import languagesData from './languages.js';
 
 // DOM Elements
 const entryPage = document.getElementById('entry-page');
 const linksPage = document.getElementById('links-page');
-const slotInput = document.getElementById('slot-input');
-const enterBtn = document.getElementById('enter-btn');
-const errorMsg = document.getElementById('error-msg');
 const backBtn = document.getElementById('back-btn');
 const linksList = document.getElementById('links-list');
 const slotTitle = document.getElementById('slot-title');
+const languageCards = document.querySelectorAll('.language-card');
 
 /**
- * Handles the logic for entering a slot number.
+ * Handles language selection.
+ * @param {string} lang 
  */
-function handleEnter() {
-    const slotNum = parseInt(slotInput.value);
-
-    // Validate Input
-    if (!slotNum || slotNum < 1 || slotNum > 40) {
-        showError();
+function handleLanguageSelect(lang) {
+    if (!languagesData[lang]) {
+        console.error('Invalid language:', lang);
         return;
     }
 
-    // Retrieve Data
-    const links = slotsData[slotNum];
-    if (!links) {
-        showError();
-        return;
-    }
-
-    // Render Links
-    renderLinks(slotNum, links);
-
-    // Switch View
+    renderLinks(lang, languagesData[lang]);
     switchPage('links');
+    // Add history entry
+    history.pushState({ page: 'links', lang: lang }, '', `#${lang}`);
 }
 
 /**
- * Shows the error message with animation.
- */
-function showError() {
-    errorMsg.classList.remove('hidden');
-    entryPage.querySelector('.terminal-window').style.borderColor = '#ff5555';
-    setTimeout(() => {
-        entryPage.querySelector('.terminal-window').style.borderColor = '#30363d';
-    }, 500);
-}
-
-/**
- * Renders the list of links for a specific slot.
- * @param {number} slotNum 
+ * Renders the list of links for a specific language.
+ * @param {string} lang 
  * @param {Array} links 
  */
-function renderLinks(slotNum, links) {
-    slotTitle.innerText = `SLOT ${slotNum}: DATA ACQUIRED`;
+function renderLinks(lang, links) {
+    const langName = lang.toUpperCase();
+    slotTitle.innerText = `${langName} PROGRAMS: DATA ACQUIRED`;
     linksList.innerHTML = ''; // Clear previous
 
     links.forEach((link, index) => {
@@ -61,13 +39,15 @@ function renderLinks(slotNum, links) {
         // Use title if available, otherwise use the URL as the text
         const displayText = link.title ? link.title : link.url;
 
+        // Removed target="_blank" to open in same tab
         li.innerHTML = `
-            <a href="${link.url}" target="_blank">
-                <span class="prefix">OP_CODE_0${index + 1} >></span> ${displayText}
+            <a href="${link.url}" target="_self">
+                <span class="prefix">OP_CODE_${(index + 1).toString().padStart(2, '0')} >></span> 
+                ${displayText}
             </a>
         `;
         // Add staggered animation delay
-        li.style.animation = `scan 0.5s ease-out ${index * 0.1}s backwards`;
+        li.style.animation = `scan 0.5s ease-out ${index * 0.05}s backwards`;
         linksList.appendChild(li);
     });
 }
@@ -82,34 +62,63 @@ function switchPage(page) {
         entryPage.classList.add('hidden');
         linksPage.classList.remove('hidden');
         linksPage.classList.add('active');
-        errorMsg.classList.add('hidden'); // Clear error
     } else {
         linksPage.classList.remove('active');
         linksPage.classList.add('hidden');
         entryPage.classList.remove('hidden');
         entryPage.classList.add('active');
-        slotInput.value = ''; // Reset input
-        slotInput.focus();
+        // Reset URL hash when going back to entry
+        if (location.hash) {
+            history.replaceState({ page: 'entry' }, '', ' ');
+        }
     }
 }
 
 // Event Listeners
-enterBtn.addEventListener('click', handleEnter);
+languageCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const lang = card.getAttribute('data-lang');
+        handleLanguageSelect(lang);
+    });
+});
 
-slotInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        handleEnter();
+if (backBtn) {
+    backBtn.addEventListener('click', () => {
+        switchPage('entry');
+        history.pushState({ page: 'entry' }, '', ' ');
+    });
+}
+
+// Handle Browser Back Button
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.page === 'links') {
+        // Correctly re-render if we are going forward to a link state
+        if (event.state.lang) {
+            renderLinks(event.state.lang, languagesData[event.state.lang]);
+            switchPage('links');
+        }
+    } else {
+        // Default to entry page
+        switchPage('entry');
     }
 });
 
-backBtn.addEventListener('click', () => {
-    switchPage('entry');
-});
+// Handle Initial Load with Hash
+function initHash() {
+    const hash = location.hash.replace('#', '');
+    if (hash && languagesData[hash]) {
+        renderLinks(hash, languagesData[hash]);
+        switchPage('links');
+    }
+}
 
-// Initial Focus
-slotInput.focus();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHash);
+} else {
+    initHash();
+}
 
-/* --- DEBUG / HACKING UI LOGIC --- */
+/* --- DEBUG / HACKING UI LOGIC (RETAINED BUT MODIFIED IF NEEDED) --- */
 const debugPanel = document.getElementById('debug-panel');
 const slotGrid = document.getElementById('slot-grid');
 
@@ -121,31 +130,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 function toggleDebugPanel() {
-    debugPanel.classList.toggle('hidden');
-    if (!debugPanel.classList.contains('hidden')) {
-        initDebugPanel();
+    if (debugPanel) {
+        debugPanel.classList.toggle('hidden');
     }
 }
-
-function initDebugPanel() {
-    slotGrid.innerHTML = '';
-    Object.keys(slotsData).forEach(key => {
-        const id = parseInt(key);
-        const data = slotsData[id];
-        const isActive = data.some(l => l.url && l.url !== '#' && l.url !== '');
-
-        const node = document.createElement('div');
-        node.className = `slot-node ${isActive ? 'active' : 'empty'}`;
-        // No text inside the nodes
-        node.title = isActive ? `Slot ${id}: ACTIVE` : `Slot ${id}: EMPTY`;
-
-        node.addEventListener('click', () => {
-            slotInput.value = id;
-            handleEnter();
-        });
-
-        slotGrid.appendChild(node);
-    });
-}
-
-

@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: round2
+    env: static
+    staticPublishPath: ./
+    buildCommand: null
